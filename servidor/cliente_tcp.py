@@ -18,6 +18,7 @@ class ClientTCP:
 	@staticmethod
 	def rec_data(sock):
 		while True:
+			sock.bind(('localhost', 9500))
 			data = sock.recv(2048)
 			print(f'Servidor enviou >>> {data.decode()}')
 
