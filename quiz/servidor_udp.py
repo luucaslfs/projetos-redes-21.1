@@ -99,7 +99,7 @@ class ServidorUDP:
 			i += 1
 		print(f'\nQuiz carregado: \n\n')
 		for key in range(1,21):
-			print(f'Pergunta[{key}]: {self.questions[key]}\n')
+			print(f'Pergunta[{key}]: {self.questions[key]}')
 
 	@staticmethod
 	# Envia mensagem a todos os clientes na lista (conectados)
