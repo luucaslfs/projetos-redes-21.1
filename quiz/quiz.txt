@@ -1,1 +1,3 @@
-{"question":"Qual a data do aniversario de Recife?\nR:  1. 12/05    2. 06/05    3. 09/09", "answer": "1"} 
+Qual a data do aniversario de Recife?\nR:  1. 12/05    2. 06/05    3. 09/09, 1
+Com quantos paus faco uma canoa?\nR:  1. 12    2. 45    4. 77, 2
+Qual a cor do ceu?\nR:   1. Azul   2. Verde    3. Amarelo, 1
