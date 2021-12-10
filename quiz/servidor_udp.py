@@ -4,19 +4,21 @@ import time
 import random
 
 class ServidorUDP:
-	clients = list
+	clients = dict
 	server_socket = None
 	buffer_size = 2048 # Tamanho do buffer (bytes)
 	questions = list
 	bool_qst = list
+	slots = list
 
 	def __init__(self, address, port):
 		self.server_socket = socket(AF_INET, SOCK_DGRAM)
 		self.server_socket.bind((address, port)) # Vinculando socket a um IP:Porta
 
-		self.clients = []
+		self.clients = {}
 		self.questions = [None for i in range(21)] # slot zero fica vazio
 		self.bool_qst = [False for i in range(21)] # marcador de perguntas usadas no jogo
+		self.slot = [None for i in range(5)]	   # slot de jogadores
 
 		# Carregando perguntas e respostas
 		self.load_quiz(self)
@@ -32,22 +34,27 @@ class ServidorUDP:
 
 			# Adicionando novo cliente, caso haja espaco
 			if client not in self.clients:
-				if len(self.clients) < 6:
-					self.new_client(self, client)
+				if comm == 'ola servidor':
+					if len(self.clients) < 6:
+						self.new_client(self, client)
+					else:
+						print('Jogo lotado, tente mais tarde')
+						break
 				else:
-					print('Jogo lotado, tente mais tarde')
-					break
+					self.server_socket.sendto('Comando nao reconhecido, para se conectar envie "ola servidor"'.encode(), client)
 			else:
 				if comm == 'iniciar':
 					if len(self.clients) > 1:
-						print(f'Jogador {client} iniciou o jogo!')
+						msg = f'Jogador {client} iniciou o jogo!'
+						print(msg)
+						self.broadcast(self, msg)
 						self.play_game(self)
 					else:
 						print("Nao ha jogadores suficientes")
 				
 				elif comm == 'quit':
-					print(f'Jogador {client} saiu.')
-
+					self.clients.pop(client)
+					print(f'Jogador {client} saiu.')				
 	
 	@staticmethod
 	def print_clients(self):
@@ -65,30 +72,40 @@ class ServidorUDP:
 	# Funcao que adiciona um novo cliente a nossa lista e confirma conexao
 	@staticmethod
 	def new_client(self, client):
-		self.clients.append(client)
+		self.clients[client][score] = 0
 		print(f'Novo cliente conectado: {client}')
-		msg = 'Ola cliente voce esta conectado'
+		msg = 'Conexao estabelecida com sucesso!'
 		self.server_socket.sendto(msg.encode(), client)
 	
+	# Funcao que inicia um novo jogo
 	@staticmethod
 	def play_game(self):
 		self.broadcast(self, "Bem vindos! Vamos comecar o jogo em 10 segundos!\n")
-		self.broadcast(self, self.print_clients(self))
+		print("Jogo iniciando em 10 segundos!")
+		print(self.print_clients(self))
+		for key in self.clients:
+			self.clients[key][score] = 0
+
 		time.sleep(10)
+		
 		print("Jogo Iniciado")
-		self.new_round(self)
+		for i in range(5):
+			self.broadcast(self, f"\nRodada {i+1} iniciada!")
+			self.new_round(self)
+		
 
 	@staticmethod
 	def new_round(self):
-		self.broadcast(self, "Rodada iniciada!\n")
 		run = True
 		while run: # pensar se em algum momento ficarei sem perguntas (vai bugar)
 			id = random.randint(1, 3)
-			if self.bool_qst[id]:	
+			if not self.bool_qst[id]:	
 				pergunta = self.questions[id]
+				self.bool_qst[id] = True
 				run = False
-
+		
 		self.broadcast(self, f'Pergunta: {pergunta[0]}')
+		
 	
 	@staticmethod
 	def load_quiz(self):
@@ -97,9 +114,10 @@ class ServidorUDP:
 		for line in qst_file:
 			self.questions[i] = line.split(', ')
 			i += 1
-		print(f'\nQuiz carregado: \n\n')
+		print(f'\nQuiz carregado: \n')
 		for key in range(1,21):
 			print(f'Pergunta[{key}]: {self.questions[key]}')
+		print('\n')
 
 	@staticmethod
 	# Envia mensagem a todos os clientes na lista (conectados)
