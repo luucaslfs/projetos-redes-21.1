@@ -134,7 +134,6 @@ class ServidorUDP:
 		# Criando uma thread por cliente pra esperar a resposta deles
 		i = 1
 		for key in self.clients:
-			print(f"Thread Resposta {i} iniciada")
 			Thread(target=self.rec_answer, args=(self,)).start()
 			i += 1
 

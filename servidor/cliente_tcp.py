@@ -20,6 +20,6 @@ class ClientTCP:
 		while True:
 			sock.bind(('localhost', 9500))
 			data = sock.recv(2048)
-			print(f'Servidor enviou >>> {data.decode()}')
+			print(f'SERVIDOR: {data.decode()}')
 
 cliente_tcp = ClientTCP('localhost', 8080)
