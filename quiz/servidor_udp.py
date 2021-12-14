@@ -183,10 +183,13 @@ class ServidorUDP:
 
 		i = 1
 		for client in sorted(ranking, key = ranking.get, reverse=True):
+			if i == 1:
+				self.broadcast(self, f"O jogador {client} eh o CAMPEAO!!!\n")
 			msg = f"{i}o lugar - {client}:  {ranking[client]} pontos"
 			self.broadcast(self, msg)
 			print(msg)
 			i += 1
+		
 
 		
 	# Funcao que roda numa thread para aguardar respostas dos clientes (jogadores)
