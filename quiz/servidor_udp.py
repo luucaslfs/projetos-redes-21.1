@@ -45,7 +45,7 @@ class ServidorUDP:
 			else:
 				if comm == 'iniciar':
 					if len(self.clients) > 1:
-						msg = f'Jogador {client} iniciou o jogo!'
+						msg = f'Jogador {client} iniciou um novo jogo!'
 						print(f"Cliente enviou: {msg}")
 						self.broadcast(self, msg)
 						self.play_game(self)
@@ -72,6 +72,7 @@ class ServidorUDP:
 			msg += '\nNao há clientes na sessao\n'
 		msg += "\n\n"
 		return msg
+
 
 	# Funcao que adiciona um novo cliente a nossa lista e confirma conexao
 	@staticmethod
@@ -124,6 +125,7 @@ class ServidorUDP:
 			print(msg)
 			i += 1
 		
+
 	# Funcao que inicia e maneja uma unica rodada
 	@staticmethod
 	def new_round(self):
@@ -144,9 +146,9 @@ class ServidorUDP:
 			Thread(target=self.rec_answer, args=(self,)).start()
 			i += 1
 
-		time.sleep(7)
-		self.broadcast(self, '\nRestam 3 segundos!\n')
-		time.sleep(3)
+		time.sleep(6)
+		self.broadcast(self, '\nRestam 4 segundos!\n')
+		time.sleep(4)
 
 		msg = "Rodada FINALIZADA\n"
 		self.broadcast(self, msg)
@@ -156,16 +158,22 @@ class ServidorUDP:
 			client = self.clients[key]
 			print(f"Cliente {key} respondeu: {client['Answer']}")
 			
-			if pergunta[1] == client['Answer']:
-				msg = "Resposta Correta +4 pontos"
-				self.server_socket.sendto(msg.encode(), key)
-				print(msg)
-				self.clients[key]['Score'] += 4
-			else:
-				msg = "Resposta Incorreta -1 ponto"
+			
+			if client['Answer'] == None:
+				msg = "Sem Resposta -1 ponto"
 				self.server_socket.sendto(msg.encode(), key)
 				print(msg)
 				self.clients[key]['Score'] -= 1
+			elif pergunta[1] == client['Answer']:
+				msg = "Resposta Correta +25 pontos"
+				self.server_socket.sendto(msg.encode(), key)
+				print(msg)
+				self.clients[key]['Score'] += 25
+			else:
+				msg = "Resposta Incorreta -5 pontos"
+				self.server_socket.sendto(msg.encode(), key)
+				print(msg)
+				self.clients[key]['Score'] -= 5
 			
 			print("-------\n")
 		
@@ -193,11 +201,15 @@ class ServidorUDP:
 			print(f'Pergunta[{key}]: {self.questions[key]}')
 		print('\n')
 
+
 	@staticmethod
 	# Envia mensagem a todos os clientes na lista (conectados)
 	def broadcast(self, data):
 		for client in self.clients:
 			self.server_socket.sendto(data.encode(), client)
-				
+
+
+
+
 
 serv = ServidorUDP('localhost', 9500)

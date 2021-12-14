@@ -1,3 +1,20 @@
-Qual a data do aniversario de Recife?\nR:  1. 12/05    2. 06/05    3. 09/09, 1
-Com quantos paus faco uma canoa?\nR:  1. 12    2. 45    4. 77, 2
-Qual a cor do ceu?\nR:   1. Azul   2. Verde    3. Amarelo, 1
+Qual a data do aniversario de Recife?\nR:  1. 12/05    2. 06/05    3. 12/03, 3
+Quanta casa decimais tem PI?\nR:   1. Duas   2. Centenas   3. Infinitas, 3
+Qual a cor do ceu?\nR:   1. Azul   2. Verde   3. Amarelo, 1
+Normalmente, quantos litros de sangue uma pessoa tem?\nR:   1. Entre 2 e 4 litros   2. Entre 4 e 6 litros   3. Exatamente 10 litros, 2
+De quem é a famosa frase: Penso logo existo?\nR:   1. Platao   2. Descartes   3. Socrates, 2
+Onde foi inventado o chuveiro eletrico?\nR:   1. Brasil   2. Franca    3. Inglaterra, 1
+Qual o menor pais do mundo?\nR:   1. Malta   2. Vaticano   3. San Marino, 2
+Qual o maior pais do mundo?R:   1. India   2. China    3. Russia, 3
+Qual o livro mais vendido do mundo depois da biblia?\nR:   1. Dom Quixote   2. O Pequeno Principe   3. O Senhor dos Aneis, 1
+Qual a traducao da palavra legend?\nR:   1. Legenda   2. Lenda   3. Legendario, 2
+Quanto tempo a luz do sol viaja ate chegar na Terra?\nR:   1. 8 minutos   2. Segundos   3. Um dia, 1
+Qual a nacionalidade de Che Guevara?\nR:   1. Cubana   2. Peruana   3. Argentina, 3
+Em que periodo da pre-historia o fogo foi descoberto?\nR:   1. Neolitico   2. Idade Media   3. Paleolitico, 3
+Qual foi o primeiro recurso do homem para explicar a origem das coisas?\nR:   1. Filosofia   2. Mitologia   3. Astronomia, 2
+Quais cromossomos determinam o sexo masculino?\nR:   1. Os V   2. Os Y   3. Os X, 2
+Como se chamam os vasos que transportam sangue do coracao para a periferia do corpo?\nR:   1. Veias   2. Arterias   3. Atrio, 2
+Qual o maior arquipelago do Planeta?\nR:   1. Filipinas   2. Indonesia   3. Bahamas, 2
+Em que oceano fica Madagascar?\nR:   1. Atlantico   2. Pacifico   3. Indico, 3
+Qual o metal simbolizado por 'Au'?\nR:   1. Cobre   2. Prata   3. Ouro, 3
+Quem foi o criados da tragedia grega?\nR:   1. Esquilo   2. Sofocles   3. Homero, 1
