@@ -88,7 +88,7 @@ class ServidorUDP:
 		print(f'Novo cliente conectado: {client}')
 		msg = 'Conexao estabelecida com sucesso!'
 		self.server_socket.sendto(msg.encode(), client)
-		msg = '\n** INSTRUCOES **\nQuando  o jogo iniciar, a cada rodada, uma pergunta sera enviada com 3 opcoes de respostas representadas por numeros:\n\nPergunta \ R:   1.Resposta1    2.Resposta2   3.Resposta3\n\n !Envie apenas o numero correspondente a resposta desejada!'
+		msg = '\n** INSTRUCOES **\nQuando  o jogo iniciar, a cada rodada, uma pergunta sera enviada com 3 opcoes de respostas representadas por numeros:\n\nPergunta \ R:   1.Resposta1    2.Resposta2   3.Resposta3\n\n !Envie apenas o numero correspondente a resposta desejada!\nAguarde alguem iniciar um jogo ou envie "iniciar" para comecar um novo jogo'
 		self.server_socket.sendto(msg.encode(), client)	
 
 
