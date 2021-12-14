@@ -38,7 +38,7 @@ class ServidorUDP:
 					if len(self.clients) < 6:
 						self.new_client(self, client)
 					else:
-						print('Jogo lotado, tente mais tarde')
+						self.server_socket.sendto('Jogo lotado, tente mais tarde'.encode(), client)
 						break
 				else:
 					self.server_socket.sendto('Comando nao reconhecido, para se conectar envie "ola servidor"'.encode(), client)
@@ -85,6 +85,8 @@ class ServidorUDP:
 		print(self.print_clients(self))
 		for key in self.clients:
 			self.clients[key][score] = 0
+
+		# ZERAR BOOL de PERGUNTAS
 
 		time.sleep(10)
 		
