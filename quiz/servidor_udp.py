@@ -59,6 +59,13 @@ class ServidorUDP:
 					print(f'Jogador {client} saiu.')				
 	
 
+	@staticmethod
+	# Envia mensagem a todos os clientes na lista (conectados)
+	def broadcast(self, data):
+		for client in self.clients:
+			self.server_socket.sendto(data.encode(), client)
+
+
 	# Funcao que retorna lista de clientes conectados no momento
 	@staticmethod
 	def list_clients(self):
@@ -81,7 +88,9 @@ class ServidorUDP:
 		print(f'Novo cliente conectado: {client}')
 		msg = 'Conexao estabelecida com sucesso!'
 		self.server_socket.sendto(msg.encode(), client)
-	
+		msg = '\n** INSTRUCOES **\nQuando  o jogo iniciar, a cada rodada, uma pergunta sera enviada com 3 opcoes de respostas representadas por numeros:\n\nPergunta \ R:   1.Resposta1    2.Resposta2   3.Resposta3\n\n !Envie apenas o numero correspondente a resposta desejada!'
+		self.server_socket.sendto(msg.encode(), client)	
+
 
 	# Funcao que inicia e maneja um jogo inteiro, do inicio ao fim
 	@staticmethod
@@ -104,27 +113,10 @@ class ServidorUDP:
 			time.sleep(10)
 		
 		msg = "*** FIM DE JOGO ***\n"
-		self.print_result(self)
-
-	
-	# Funcao que printa o ranking do momento, de acordo com os valores na nossa base de clientes, em ordem
-	@staticmethod
-	def print_result(self):
-		msg = "\n** RANKING **\n"
 		print(msg)
 		self.broadcast(self, msg)
+		self.print_result(self)
 
-		ranking = {}
-		for key in self.clients:
-			ranking[key] = self.clients[key]['Score']
-
-		i = 1
-		for client in sorted(ranking, key = ranking.get, reverse=True):
-			msg = f"{i}o lugar - {client}:  {ranking[client]} pontos"
-			self.broadcast(self, msg)
-			print(msg)
-			i += 1
-		
 
 	# Funcao que inicia e maneja uma unica rodada
 	@staticmethod
@@ -146,7 +138,7 @@ class ServidorUDP:
 			Thread(target=self.rec_answer, args=(self,)).start()
 			i += 1
 
-		time.sleep(6)
+		time.sleep(16)
 		self.broadcast(self, '\nRestam 4 segundos!\n')
 		time.sleep(4)
 
@@ -164,7 +156,7 @@ class ServidorUDP:
 				self.server_socket.sendto(msg.encode(), key)
 				print(msg)
 				self.clients[key]['Score'] -= 1
-			elif pergunta[1] == client['Answer']:
+			elif str(pergunta[1][0]) == client['Answer']:
 				msg = "Resposta Correta +25 pontos"
 				self.server_socket.sendto(msg.encode(), key)
 				print(msg)
@@ -175,8 +167,26 @@ class ServidorUDP:
 				print(msg)
 				self.clients[key]['Score'] -= 5
 			
-			print("-------\n")
-		
+			print("-------\n")		
+	
+	
+	# Funcao que printa o ranking do momento, de acordo com os valores na nossa base de clientes, em ordem
+	@staticmethod
+	def print_result(self):
+		msg = "\n** RANKING **\n"
+		print(msg)
+		self.broadcast(self, msg)
+
+		ranking = {}
+		for key in self.clients:
+			ranking[key] = self.clients[key]['Score']
+
+		i = 1
+		for client in sorted(ranking, key = ranking.get, reverse=True):
+			msg = f"{i}o lugar - {client}:  {ranking[client]} pontos"
+			self.broadcast(self, msg)
+			print(msg)
+			i += 1
 
 		
 	# Funcao que roda numa thread para aguardar respostas dos clientes (jogadores)
@@ -200,16 +210,6 @@ class ServidorUDP:
 		for key in range(1,21):
 			print(f'Pergunta[{key}]: {self.questions[key]}')
 		print('\n')
-
-
-	@staticmethod
-	# Envia mensagem a todos os clientes na lista (conectados)
-	def broadcast(self, data):
-		for client in self.clients:
-			self.server_socket.sendto(data.encode(), client)
-
-
-
 
 
 serv = ServidorUDP('localhost', 9500)
