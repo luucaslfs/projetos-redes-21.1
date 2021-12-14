@@ -17,6 +17,6 @@ class ClientUDP:
 	def rec_data(sock):
 		while True:
 			data, server_address = sock.recvfrom(2048)
-			print(f'Servidor {server_address} enviou >>> {data.decode()}')
+			print(f'SERVIDOR {server_address} :** {data.decode()}')
 
 cliente_tcp = ClientUDP('localhost', 9500)
