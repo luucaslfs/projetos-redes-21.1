@@ -41,23 +41,27 @@ class ServidorUDP:
 						self.server_socket.sendto('Jogo lotado, tente mais tarde'.encode(), client)
 						break
 				else:
-					self.server_socket.sendto('Comando nao reconhecido, para se conectar envie "ola servidor"'.encode(), client)
+					self.server_socket.sendto(f'Comando {comm} nao reconhecido, para se conectar envie "ola servidor"'.encode(), client)
 			else:
 				if comm == 'iniciar':
 					if len(self.clients) > 1:
 						msg = f'Jogador {client} iniciou o jogo!'
-						print(msg)
+						print(f"Cliente enviou: {msg}")
 						self.broadcast(self, msg)
 						self.play_game(self)
 					else:
-						print("Nao ha jogadores suficientes")
+						msg = "Nao ha jogadores suficientes para iniciar o jogo"
+						print(msg)
+						self.broadcast(self, msg)
 				
 				elif comm == 'quit':
 					self.clients.pop(client)
 					print(f'Jogador {client} saiu.')				
 	
+
+	# Funcao que retorna lista de clientes conectados no momento
 	@staticmethod
-	def print_clients(self):
+	def list_clients(self):
 		i = 0
 		msg = '\nClientes atualmente na sessao:\n'
 		if len(self.clients) > 0:
@@ -72,34 +76,59 @@ class ServidorUDP:
 	# Funcao que adiciona um novo cliente a nossa lista e confirma conexao
 	@staticmethod
 	def new_client(self, client):
-		self.clients[client][score] = 0
+		self.clients[client] = {'Score': 0, 'Answer': None}
 		print(f'Novo cliente conectado: {client}')
 		msg = 'Conexao estabelecida com sucesso!'
 		self.server_socket.sendto(msg.encode(), client)
 	
-	# Funcao que inicia um novo jogo
+
+	# Funcao que inicia e maneja um jogo inteiro, do inicio ao fim
 	@staticmethod
 	def play_game(self):
 		self.broadcast(self, "Bem vindos! Vamos comecar o jogo em 10 segundos!\n")
 		print("Jogo iniciando em 10 segundos!")
-		print(self.print_clients(self))
+		print(self.list_clients(self))
+		
 		for key in self.clients:
-			self.clients[key][score] = 0
-
-		# ZERAR BOOL de PERGUNTAS
+			self.clients[key]['Score'] = 0
+		self.bool_qst = [False for i in range(21)]
 
 		time.sleep(10)
 		
 		print("Jogo Iniciado")
-		for i in range(5):
+		for i in range(3):
 			self.broadcast(self, f"\nRodada {i+1} iniciada!")
 			self.new_round(self)
+			self.broadcast(self, "*Proxima rodada iniciando em 10 segundos*")
+			time.sleep(10)
 		
+		msg = "*** FIM DE JOGO ***\n"
+		self.print_result(self)
 
+	
+	# Funcao que printa o ranking do momento, de acordo com os valores na nossa base de clientes, em ordem
+	@staticmethod
+	def print_result(self):
+		msg = "\n** RANKING **\n"
+		print(msg)
+		self.broadcast(self, msg)
+
+		ranking = {}
+		for key in self.clients:
+			ranking[key] = self.clients[key]['Score']
+
+		i = 1
+		for client in sorted(ranking, key = ranking.get, reverse=True):
+			msg = f"{i}o lugar - {client}:  {ranking[client]} pontos"
+			self.broadcast(self, msg)
+			print(msg)
+			i += 1
+		
+	# Funcao que inicia e maneja uma unica rodada
 	@staticmethod
 	def new_round(self):
 		run = True
-		while run: # pensar se em algum momento ficarei sem perguntas (vai bugar)
+		while run:
 			id = random.randint(1, 3)
 			if not self.bool_qst[id]:	
 				pergunta = self.questions[id]
@@ -107,8 +136,51 @@ class ServidorUDP:
 				run = False
 		
 		self.broadcast(self, f'Pergunta: {pergunta[0]}')
+
+		# Criando uma thread por cliente pra esperar a resposta deles
+		i = 1
+		for key in self.clients:
+			print(f"Thread Resposta {i} iniciada")
+			Thread(target=self.rec_answer, args=(self,)).start()
+			i += 1
+
+		time.sleep(7)
+		self.broadcast(self, '\nRestam 3 segundos!\n')
+		time.sleep(3)
+
+		msg = "Rodada FINALIZADA\n"
+		self.broadcast(self, msg)
 		
-	
+		print("Respostas:\n")
+		for key in self.clients:
+			client = self.clients[key]
+			print(f"Cliente {key} respondeu: {client['Answer']}")
+			
+			if pergunta[1] == client['Answer']:
+				msg = "Resposta Correta +4 pontos"
+				self.server_socket.sendto(msg.encode(), key)
+				print(msg)
+				self.clients[key]['Score'] += 4
+			else:
+				msg = "Resposta Incorreta -1 ponto"
+				self.server_socket.sendto(msg.encode(), key)
+				print(msg)
+				self.clients[key]['Score'] -= 1
+			
+			print("-------\n")
+		
+
+		
+	# Funcao que roda numa thread para aguardar respostas dos clientes (jogadores)
+	@staticmethod
+	def rec_answer(self):
+		sock = self.server_socket.recvfrom(self.buffer_size)
+		client = sock[1]
+		msg = sock[0]
+		self.clients[client]['Answer'] = msg.decode()
+
+
+	# Funcao que carrega o quiz a partir do arquivo 'quiz.txt'
 	@staticmethod
 	def load_quiz(self):
 		qst_file = open("quiz.txt")

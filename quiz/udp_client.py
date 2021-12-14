@@ -5,7 +5,7 @@ class ClientUDP:
 	def __init__(self, server_address, port):
 		sock = socket(AF_INET, SOCK_DGRAM)
 
-		msg = 'Olá servidor'
+		msg = 'ola servidor'
 		sock.sendto(msg.encode(), (server_address, port))
 		Thread(target=self.rec_data, args=(sock,)).start()
 		
