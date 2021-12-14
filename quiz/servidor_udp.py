@@ -106,7 +106,7 @@ class ServidorUDP:
 		time.sleep(10)
 		
 		print("Jogo Iniciado")
-		for i in range(3):
+		for i in range(5):
 			self.broadcast(self, f"\nRodada {i+1} iniciada!")
 			self.new_round(self)
 			self.broadcast(self, "*Proxima rodada iniciando em 10 segundos*")
@@ -123,7 +123,7 @@ class ServidorUDP:
 	def new_round(self):
 		run = True
 		while run:
-			id = random.randint(1, 3)
+			id = random.randint(1, 20)
 			if not self.bool_qst[id]:	
 				pergunta = self.questions[id]
 				self.bool_qst[id] = True
@@ -138,7 +138,7 @@ class ServidorUDP:
 			Thread(target=self.rec_answer, args=(self,)).start()
 			i += 1
 
-		time.sleep(16)
+		time.sleep(6)
 		self.broadcast(self, '\nRestam 4 segundos!\n')
 		time.sleep(4)
 
