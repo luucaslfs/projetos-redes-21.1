@@ -9,7 +9,6 @@ class ServidorUDP:
 	buffer_size = 2048 # Tamanho do buffer (bytes)
 	questions = list
 	bool_qst = list
-	slots = list
 
 	def __init__(self, address, port):
 		self.server_socket = socket(AF_INET, SOCK_DGRAM)
@@ -18,7 +17,6 @@ class ServidorUDP:
 		self.clients = {}
 		self.questions = [None for i in range(21)] # slot zero fica vazio
 		self.bool_qst = [False for i in range(21)] # marcador de perguntas usadas no jogo
-		self.slot = [None for i in range(5)]	   # slot de jogadores
 
 		# Carregando perguntas e respostas
 		self.load_quiz(self)
@@ -35,7 +33,7 @@ class ServidorUDP:
 			# Adicionando novo cliente, caso haja espaco
 			if client not in self.clients:
 				if comm == 'ola servidor':
-					if len(self.clients) < 6:
+					if len(self.clients) < 5:
 						self.new_client(self, client)
 					else:
 						self.server_socket.sendto('Jogo lotado, tente mais tarde'.encode(), client)
@@ -59,8 +57,8 @@ class ServidorUDP:
 					print(f'Jogador {client} saiu.')				
 	
 
-	@staticmethod
 	# Envia mensagem a todos os clientes na lista (conectados)
+	@staticmethod
 	def broadcast(self, data):
 		for client in self.clients:
 			self.server_socket.sendto(data.encode(), client)
